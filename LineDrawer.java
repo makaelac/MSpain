@@ -15,6 +15,8 @@ public class LineDrawer
     private boolean circle = true;
     private double finalX, finalY;
     private boolean line = true;
+    private boolean draw = true;
+    private String currentText = (" ");
 
     /**
      * Constructor for objects of class LineDrawer
@@ -29,7 +31,26 @@ public class LineDrawer
         UI.addButton("Rect or Circ", this::changeShape); // callback to change from a rect to a circle
         UI.addButton("Line or Fill", this::changeLine); // callback to change from line to fill
         UI.addSlider("Width", 1, 20, 10, this::widthSlider);
+        UI.addButton("Colour or Text", this::changeText);
         UI.addButton("Quit", UI::quit);
+        
+        UI.addTextField("Text" , this::addText);
+    }
+    
+    public void addText(String text) {
+        currentText = text;
+    }
+    
+    /**
+     * callback to change from drawing to adding text
+     */
+    public void changeText() {
+        if (draw == true) {
+            draw = false;
+        } else if (draw == false) {
+            draw = true;
+        }
+        System.out.println(draw);
     }
     
     /**
@@ -86,28 +107,37 @@ public class LineDrawer
      *  Draws a line
      */
     public void doMouse(String action, double x, double y) {
-        if (action.equals("pressed")) {
-            // store the pressed button
-            this.startX = x;
-            this.startY = y;
-        
-        } else if (action.equals("released"))  {
-            if (line == true) {
-                // draw line
-                UI.drawLine(this.startX, this.startY, x, y);
-            } else if (line == false) {
-                // draw rectangle if fill button is clicked
-                this.finalX = x;
-                this.finalY = y;
-                UI.fillRect(this.startX, this.startY, this.finalX-this.startX, this.finalY-this.startY);
+        if (draw == true) {
+            if (action.equals("pressed")){
+                // store the pressed button
+                this.startX = x;
+                this.startY = y;
+            
+            } else if (action.equals("released"))  {
+                if (line == true) {
+                    // draw line
+                    UI.drawLine(this.startX, this.startY, x, y);
+                } else if (line == false) {
+                    // draw rectangle if fill button is clicked
+                    this.finalX = x;
+                    this.finalY = y;
+                    UI.fillRect(this.startX, this.startY, this.finalX-this.startX, this.finalY-this.startY);
+                }
+            } else if (action.equals("clicked")) {
+                if (circle == true) {    // draw a circle on click
+                    UI.fillOval(x-50/2, y-50/2, 50, 50);
+                } else if (circle == false) {
+                    // draw rectangle if rect button clicked
+                    UI.fillRect(x-15, y-25, 30, 50);
+                }
             }
-        } else if (action.equals("clicked")) {
-            if (circle == true) {    // draw a circle on click
-                UI.fillOval(x-50/2, y-50/2, 50, 50);
-            } else if (circle == false) {
-                // draw rectangle if rect button clicked
-                UI.fillRect(x-15, y-25, 30, 50);
-            }
+        } else if (draw == false) {
+            if (action.equals("pressed")) {
+                // add text where mouse is clicked
+                this.startX = x;
+                this.startY = y;
+                UI.drawString(currentText, x, y);
+                }
         }
     }
     
