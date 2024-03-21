@@ -12,7 +12,7 @@ public class LineDrawer
     // instance variables
     private double startX, startY; // field to remember pressed position
     private Color currentColor = Color.black; // current color start at black
-    private boolean circle = true;
+    private boolean circle = true; // variable to change from circle to rectangle
     private double finalX, finalY;
     private boolean line = true;
     private boolean draw = true;
@@ -25,6 +25,7 @@ public class LineDrawer
     {
         // initialise instance variables
         UI.setLineWidth(10);
+        UI.setFontSize(30);
         UI.setMouseListener(this::doMouse);
         UI.addButton("Random Colour", this::randomColour);
         UI.addButton("Choose Colour", this::doChooseColour); // callback to choose color
@@ -32,9 +33,13 @@ public class LineDrawer
         UI.addButton("Line or Fill", this::changeLine); // callback to change from line to fill
         UI.addSlider("Width", 1, 20, 10, this::widthSlider);
         UI.addButton("Colour or Text", this::changeText);
-        UI.addButton("Quit", UI::quit);
-        
         UI.addTextField("Text" , this::addText);
+        UI.addSlider("Font Size", 10, 50, 30, this::fontSlider);
+        UI.addButton("Quit", UI::quit);
+    }
+    
+    public void fontSlider(double font) {
+        UI.setFontSize(font);
     }
     
     public void addText(String text) {
@@ -50,7 +55,6 @@ public class LineDrawer
         } else if (draw == false) {
             draw = true;
         }
-        System.out.println(draw);
     }
     
     /**
@@ -76,13 +80,11 @@ public class LineDrawer
      * callback to change from a rect to a circle
      */
     public void changeShape() {
-        
         if (circle == true) {
             circle = false;
         } else if (circle == false) {
             circle = true;
         }
-        System.out.println(circle);
     }
     
     /**
@@ -108,11 +110,12 @@ public class LineDrawer
      */
     public void doMouse(String action, double x, double y) {
         if (draw == true) {
+            // if user wants to draw instead of type
             if (action.equals("pressed")){
-                // store the pressed button
+                // store the pressed button x and y coordinates
                 this.startX = x;
                 this.startY = y;
-            
+
             } else if (action.equals("released"))  {
                 if (line == true) {
                     // draw line
@@ -132,13 +135,13 @@ public class LineDrawer
                 }
             }
         } else if (draw == false) {
+            // user wants to type text
             if (action.equals("pressed")) {
                 // add text where mouse is clicked
                 this.startX = x;
                 this.startY = y;
                 UI.drawString(currentText, x, y);
-                }
+            }
         }
     }
-    
 }
